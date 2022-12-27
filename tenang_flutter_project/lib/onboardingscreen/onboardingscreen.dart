@@ -31,72 +31,26 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
               controller: _controller,
               onPageChanged: (index) {
                 setState(() {
-                  isLastPage = index == 3;
+                  isLastPage = index == 2;
                 });
               },
-              children: const [
-                LogoOnboarding(),
-                OnboardingWithAssets(),
-                OnboardingWithAssets(),
-                OnboardingWithAssets(),
+              children: [
+                OnboardingWithAssets(
+                  controller: _controller,
+                  img: 'assets/med.png',
+                  command: 'Welcome Alesha',
+                ),
+                OnboardingWithAssets(
+                  controller: _controller,
+                  img: 'assets/med2.png',
+                  command: 'Find Best Doctor',
+                ),
+                OnboardingWithAssetsEnd(
+                  controller: _controller,
+                  img: 'assets/yoga.png',
+                ),
               ],
             ),
-            bottomSheet: isLastPage
-                ? TextButton(
-                    style: TextButton.styleFrom(
-                      shape: RoundedRectangleBorder(),
-                      primary: Colors.white,
-                      minimumSize: const Size.fromHeight(80.0),
-                    ),
-                    onPressed: () async {
-                      final prefs = await SharedPreferences.getInstance();
-                      prefs.setBool('showHome', false);
-                    },
-                    child: Text(
-                      'Ayo Mulai',
-                      style: TextStyle(fontSize: 20),
-                    ))
-                : Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    height: 80.0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              _controller.jumpToPage(2);
-                            },
-                            child: const Text(
-                              'LEWATI',
-                              style: TextStyle(color: Colors.white),
-                            )),
-                        Center(
-                            child: SmoothPageIndicator(
-                          controller: _controller,
-                          count: 3,
-                          effect: WormEffect(
-                            dotColor: Colors.white,
-                            dotWidth: 10.0,
-                            dotHeight: 10.0,
-                          ),
-                          onDotClicked: (index) => _controller.animateToPage(
-                              index,
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.easeIn),
-                        )),
-                        TextButton(
-                            onPressed: () {
-                              _controller.nextPage(
-                                  duration: const Duration(milliseconds: 500),
-                                  curve: Curves.easeInOut);
-                            },
-                            child: const Text(
-                              'LANJUT',
-                              style: TextStyle(color: Colors.white),
-                            )),
-                      ],
-                    ),
-                  ),
           ),
         ));
   }
