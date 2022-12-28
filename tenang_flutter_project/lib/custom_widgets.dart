@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:tenang_flutter_project/signinservice/signin.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:email_validator/email_validator.dart';
 import 'const.dart';
 
 class LogoOnboarding extends StatelessWidget {
@@ -256,28 +257,23 @@ class TextFieldCustom extends StatelessWidget {
       decoration: BoxDecoration(
           color: const Color(0xFFF4F5F7),
           borderRadius: BorderRadius.circular(20)),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: bluedark,
-          ),
-          Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
-            height: 50.0,
-            width: MediaQuery.of(context).size.width - 112,
-            child: TextField(
-              obscureText: isObscured,
-              controller: controller,
-              keyboardType: inputtype,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: hinttext,
-              ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 5.0),
+        height: 50.0,
+        width: MediaQuery.of(context).size.width - 110,
+        child: TextField(
+          obscureText: isObscured,
+          controller: controller,
+          keyboardType: inputtype,
+          decoration: InputDecoration(
+            prefixIcon: Icon(
+              icon,
+              color: bluedark,
             ),
+            border: InputBorder.none,
+            hintText: hinttext,
           ),
-        ],
+        ),
       ),
     );
   }
@@ -296,6 +292,7 @@ class TextFieldCustom2 extends StatelessWidget {
   final TextEditingController controller;
   final TextInputType inputtype;
   final String hinttext;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -306,12 +303,14 @@ class TextFieldCustom2 extends StatelessWidget {
       height: 50.0,
       width: MediaQuery.of(context).size.width - 30,
       decoration: BoxDecoration(
-          color: Color(0xFFF4F5F7), borderRadius: BorderRadius.circular(20)),
+          color: const Color(0xFFF4F5F7),
+          borderRadius: BorderRadius.circular(20)),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
         height: 50.0,
         width: MediaQuery.of(context).size.width - 112,
-        child: TextField(
+        child: TextFormField(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           obscureText: isObscured,
           controller: controller,
           keyboardType: inputtype,

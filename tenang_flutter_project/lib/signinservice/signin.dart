@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tenang_flutter_project/const.dart';
 import 'package:tenang_flutter_project/custom_widgets.dart';
+import 'package:tenang_flutter_project/main.dart';
+import 'package:tenang_flutter_project/screens/homepage.dart';
 import 'package:tenang_flutter_project/signinservice/signup.dart';
 
 class SignInPage extends StatefulWidget {
@@ -14,19 +18,44 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   TextEditingController controllerEmail = TextEditingController();
   TextEditingController controllerPass = TextEditingController();
+  bool visibleAlert = false;
+  @override
+  void dispose() {
+    controllerEmail.dispose();
+    controllerPass.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    Future SignInEmailPass() async {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const Center(
+                child: CircularProgressIndicator(),
+              ));
+
+      try {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: controllerEmail.text.trim(),
+            password: controllerPass.text.trim());
+      } on FirebaseAuthException catch (e) {
+        print(e);
+      }
+
+      navigatorKey.currentState!.popUntil((route) => route.isFirst);
+    }
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SafeArea(
-        child: Scaffold(
-            backgroundColor: Colors.white,
-            body: Container(
-              padding: const EdgeInsets.all(28.0),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: SingleChildScrollView(
+          child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(28.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -42,8 +71,8 @@ class _SignInPageState extends State<SignInPage> {
                   children: const [
                     Text(
                       'Welcome Back',
-                      style: TextStyle(
-                          fontSize: 22, fontWeight: FontWeight.w700),
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
                     ),
                     Text(
                       'sign in to continue',
@@ -83,9 +112,33 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                 ),
                 const SizedBox(
+                  height: 15,
+                ),
+                Visibility(
+                    visible: visibleAlert,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: const [
+                        Text(
+                          '* Field not completed',
+                          style: TextStyle(color: Colors.red),
+                        )
+                      ],
+                    )),
+                const SizedBox(
                   height: 15.0,
                 ),
                 GestureDetector(
+                  onTap: () async {
+                    if (controllerEmail.text.isEmpty ||
+                        controllerPass.text.isEmpty) {
+                      setState(() {
+                        visibleAlert = true;
+                      });
+                    } else {
+                      SignInEmailPass();
+                    }
+                  },
                   child: Container(
                     height: 50,
                     decoration: BoxDecoration(
@@ -108,8 +161,8 @@ class _SignInPageState extends State<SignInPage> {
                 const Center(
                   child: Text(
                     '/',
-                    style: TextStyle(
-                        fontSize: 16.0, fontWeight: FontWeight.w700),
+                    style:
+                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700),
                   ),
                 ),
                 const SizedBox(
@@ -135,8 +188,8 @@ class _SignInPageState extends State<SignInPage> {
                   children: [
                     const Text(
                       'Do not have account? ',
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w400),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -157,9 +210,9 @@ class _SignInPageState extends State<SignInPage> {
                 )
               ],
             ),
-              ),
-            )),
-      ),
+          ),
+        ),
+      )),
     );
   }
 }
