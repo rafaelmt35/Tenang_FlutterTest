@@ -1,12 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tenang_flutter_project/onboardingscreen/logopage.dart';
 import 'package:tenang_flutter_project/onboardingscreen/onboardingscreen.dart';
 import 'package:tenang_flutter_project/screens/doctorlist.dart';
 import 'package:tenang_flutter_project/screens/homepage.dart';
 import 'package:tenang_flutter_project/screens/profile.dart';
 import 'package:tenang_flutter_project/signinservice/authpage.dart';
+import 'package:tenang_flutter_project/signinservice/googlesignin.dart';
 
 import 'package:tenang_flutter_project/signinservice/signin.dart';
 
@@ -23,10 +25,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: navigatorKey,
-      debugShowCheckedModeBanner: false,
-      home: const InitialPage(),
+    return ChangeNotifierProvider(
+      create: ((context) => GoogleSignInProvider()),
+      child: MaterialApp(
+        navigatorKey: navigatorKey,
+        debugShowCheckedModeBanner: false,
+        home: const InitialPage(),
+      ),
     );
   }
 }
@@ -51,7 +56,7 @@ class InitialPage extends StatelessWidget {
           } else if (snapshot.hasData) {
             return const HomePage();
           } else {
-            return const AuthPage();
+            return const LogoPage();
           }
         },
       ),

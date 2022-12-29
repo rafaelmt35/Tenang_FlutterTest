@@ -2,10 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:tenang_flutter_project/const.dart';
 import 'package:tenang_flutter_project/custom_widgets.dart';
 import 'package:tenang_flutter_project/main.dart';
 import 'package:tenang_flutter_project/screens/homepage.dart';
+import 'package:tenang_flutter_project/signinservice/googlesignin.dart';
 import 'package:tenang_flutter_project/signinservice/signup.dart';
 
 class SignInPage extends StatefulWidget {
@@ -29,25 +31,6 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
-    Future SignInEmailPass() async {
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => const Center(
-                child: CircularProgressIndicator(),
-              ));
-
-      try {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: controllerEmail.text.trim(),
-            password: controllerPass.text.trim());
-      } on FirebaseAuthException catch (e) {
-        print(e);
-      }
-
-      navigatorKey.currentState!.popUntil((route) => route.isFirst);
-    }
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SafeArea(
@@ -71,8 +54,8 @@ class _SignInPageState extends State<SignInPage> {
                   children: const [
                     Text(
                       'Welcome Back',
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                          fontSize: 22, fontWeight: FontWeight.w700),
                     ),
                     Text(
                       'sign in to continue',
@@ -161,22 +144,30 @@ class _SignInPageState extends State<SignInPage> {
                 const Center(
                   child: Text(
                     '/',
-                    style:
-                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                        fontSize: 16.0, fontWeight: FontWeight.w700),
                   ),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
-                Center(
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        border: Border.all(color: grey, width: 2.0)),
-                    child: Center(
-                      child: Image.asset('assets/google.png'),
+                GestureDetector(
+                  onTap: () {
+                    final provider = Provider.of<GoogleSignInProvider>(
+                        context,
+                        listen: false);
+                    provider.googleLogin();
+                  },
+                  child: Center(
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(color: grey, width: 2.0)),
+                      child: Center(
+                        child: Image.asset('assets/google.png'),
+                      ),
                     ),
                   ),
                 ),
@@ -188,8 +179,8 @@ class _SignInPageState extends State<SignInPage> {
                   children: [
                     const Text(
                       'Do not have account? ',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                      style: TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w400),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -214,5 +205,24 @@ class _SignInPageState extends State<SignInPage> {
         ),
       )),
     );
+  }
+
+  Future SignInEmailPass() async {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+              child: CircularProgressIndicator(),
+            ));
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: controllerEmail.text.trim(),
+          password: controllerPass.text.trim());
+    } on FirebaseAuthException catch (e) {
+      print(e);
+    }
+
+    navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 }
